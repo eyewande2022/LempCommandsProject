@@ -1,0 +1,282 @@
+ 97  ~ssh -i "lempproject2.pem" ubuntu@ec2-3-86-42-22.compute-1.amazonaws.com
+   98  ~ssh -i "lempproject2.pem" ubuntu@3.86.42.22
+   99  ~ssh -i lempproject2.pem ubuntu@3.86.42.22
+  100  ~ssh -i lempproject2.pem ubuntu@ec2-3-86-42-22
+  101  ls
+  102  cd downloads
+  103  ~ssh -i "lempproject2.pem" ubuntu@ec2-3-86-42-22.compute-1.amazonaws.com
+  104  ls
+  105  cd ..
+  106  cd Downloads
+  107  ls
+  108  ~ssh -i "lempproject2.pem" ubuntu@ec2-3-86-42-22.compute-1.amazonaws.com
+  109  ~ssh -i lempproject2.pem ubuntu@ec2-3-86-42-22
+  110  ~ssh -i "lempproject2.pem" ubuntu@ec2-3-86-42-22.compute-1.amazonaws.com
+  111  clear
+  112  ~ssh -i "lempproject2.pem" ubuntu@ec2-3-86-42-22.compute-1.amazonaws.com
+  113  ssh -i "lempproject2.pem" ubuntu@ec2-3-86-42-22.compute-1.amazonaws.com
+  114  sudo vim /etc/nginx/sites-available/projectLEMP
+  115  sudo vim /etc/nginx/sites-available/projectLEMP
+  116  sudo nano /etc/nginx/sites-available/projectLEMP
+  117  cd Downloads
+  118  ssh -i "lempproject2.pem" ubuntu@ec2-3-86-42-22.compute-1.amazonaws.com
+  119  cd downloads
+  120  ls
+  121  ssh -i "lempproject2.pem" ubuntu@ec2-3-86-42-22.compute-1.amazonaws.com
+  122  ls
+  123  clear
+  124  history -a && history -r
+  125  history
+
+
+INUX :::::::::::::::::::::::::::::::::
+1) Create Instances and connect to your local machine 
+CREATE AN ACCOUNT WITH AWS
+CREATE AN INSTANCE AND GIVE IT A NAME 
+CHOOSE THE OS IMAGE AND A FRE TIER IMAGE THAT IS REQUIRED
+CHOOSE THE INSTANCE TYPE 
+CHOOSE A KEY PAIR LOGIN WHICH YOU WOULD NEED TO ACHIEVE THE LAUNCH TO YOUR LOCAL MACHINE LATER CHOOSE THE .PEM  pair  format
+SELECT EXISTING SECURITY GROUP 
+ALLOW SSH AND CHOOSE A REASONABLY FREE TIER MEMORY 
+THEN LAUNCH IT AND GET TO THE INSTANCE DASHBOARD 
+REFRESH TO KEEP IT RUNNING AND ALSO MAKE SURE IT PASSES STATUS AND ALSO VIEW THE VPN ASSIGNED
+CLICK THE PROJECT 1 INSTANCE 
+
+2) SYNCYING WITH LOCAL MACHINE TO BEGIN OPERATION:
+USE LINUX TO CHANGE DIRECTORY TO DOWNLOADS  (cd downloads) .
+ONCE THERE , PASTE YOUR SSH GOTTEN FROM THE AWS INSTANCE 
+AND THEN IT AUTOMATICALLY CONNECTS TO YOUR SYSTEM 
+
+
+ssh -i "projectlemp2.pem" ubuntu@ec2-3-90-229-187.compute-1.amazonaws.com
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+NGINX :::::::::::::::::::::::::::::::::
+Install NGINXusing Ubuntu’s package manager ‘apt’:
+
+sudo apt update              (to update ) 
+sudo apt install nginx     ( to install nginx)
+sudo systemctl statusnginx   (to verify nginx status if downloaded successfully )
+
+
+
+NEXT STEP WOULD BE "CHANGING THE INBOUND RULES OF THE SECURITY PORT" BY 
+ADDING A NEW RULE
+ENSURE TO "SELECT   HTTP" 
+PORT SHOULD BE 80 
+CHANGE "Custom to ANYWHERE "   AND SAVE THE RULE 
+
+
+
+ curl http://localhost:80
+CHECK ON THE TERMINAL IF THE RESPONSE SHOWS THE PAGE CHANGES BY THE DATA IT PROVIDES 
+PROCEEDS 
+
+Use this command to check the IPADDRESS FROM YOUR TERMINAL 
+curl -s http://169.254.169.254/latest/meta-data/public-ipv4
+
+
+
+LAUNCH ON WEB BROWSER TO DISPLAY :  http://3.90.229.187:80
+FINAL DESTINATION:  NGINX DEFAULT PAGE DISPLAYS
+
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+MYSQL:::::::::::::::::::::::::::::::::PROCEED TO CREATE YOUR DATABASE
+
+sudo apt install mysql-server            (Install mysql server and  TYPE YES AND ENTER) 
+sudo mysql                               (connect to the MYSQL server and show you details )
+
+It’s recommended that you run a security script that comes pre-installed with MySQL. This script will remove some insecure default settings and lock down access to your database system. Before running the script you will set a password for the root user, using mysql_native_password as default authentication method. We’re defining this user’s password as PassWord.1.
+
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'PassWord.1';
+
+mysql> exit   (Exit the MySQL shell)
+
+
+CONFIRM THE PASSWORD AGAIN   $ sudo mysql -p
+
+once you get access 
+
+mysql> exit   (Exit the MySQL shell)
+
+
+
+sudo systemctl status mysql  (TO CHECK IF MY SQL SERVER IS RUNNING )
+
+
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+PHP:::::::::::::::::::::::::::::::::PROCESS CODE TO DISPLAY DYNAMIC CONTENT TO THE END USER  
+Installing 2 packages at once (php-fpm    php-mysql)
+
+sudo apt install php-fpm php-mysql
+
+php -v   (php version)
+
+ONCE VERSION IS DONE      LAMP STACK HAS BEEN COMPLETELY INSTALLED 
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+Step 4 — Configuring Nginx to Use PHP Processor
+
+
+webroot was created using 
+
+sudo mkdir /var/www/projectLEMP
+
+
+
+sudo chown -R $USER:$USER /var/www/projectLEMP   (assign ownership of the directory with the $USER environment variable)
+
+sudo vim /etc/nginx/sites-available/projectLEMP   (USED VIM EDITOR
+
+
+This will create a new blank file. Paste in the following bare-bones configuration:
+
+#/etc/nginx/sites-available/projectLEMP
+
+server {
+    listen 80;
+    server_name projectLEMP www.projectLEMP;
+    root /var/www/projectLEMP;
+
+    index index.html index.htm index.php;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+     }
+
+    location ~ /\.ht {
+        deny all;
+    }
+
+}
+
+
+Activate your configuration by linking to the config file from Nginx’s sites-enabled directory:
+
+sudo ln -s /etc/nginx/sites-available/projectLEMP /etc/nginx/sites-enabled/
+
+
+This will tell Nginx to use the configuration next time it is reloaded. You can test your configuration for syntax errors by typing:
+
+sudo nginx -t
+You shall see following message:
+
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+
+
+
+
+
+sudo unlink /etc/nginx/sites-enabled/default   (Disable default Nginx host that is currently configured to listen on port 80, for this run:)
+
+
+
+
+sudo systemctl reload nginx          (When you are ready, reload Nginx to apply the changes:)
+
+
+sudo echo 'Hello LEMP from hostname' $(curl -s http://169.254.169.254/latest/meta-data/public-hostname) 'with public IP' $(curl -s http://169.254.169.254/latest/meta-data/public-ipv4) > /var/www/projectLEMP/index.html
+Now go to your browser and try to open your website URL using IP address:
+
+http://<Public-IP-Address>:80
+
+
+website displayed ##
+
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+STEP 5 TESTING PHP WITH NGINX
+
+sudo vim /var/www/projectLEMP/info.php
+
+
+inputing the PHP code 
+
+<?php
+phpinfo();
+
+http://3.90.229.187/info.php
+
+
+All completely viewed 
+
+Dont forget to remove this 
+
+sudo rm /var/www/your_domain/info.php
+
+
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+STEP 6 – RETRIEVING DATA FROM MYSQL DATABASE WITH PHP (CONTINUED)
+To login into the mysql server 
+sudo mysql -p
+
+
+
+
+First, connect to the MySQL console using the root account:
+
+sudo mysql  (To create a new database, run the following command from your MySQL console:)
+
+mysql> CREATE DATABASE `example_database`;   (create new data base)
+
+mysql>  CREATE USER 'example_user'@'%' IDENTIFIED WITH mysql_native_password BY 'password';   GET A NEW PASSWORD 
+Now we need to give this user permission over the example_database database:
+
+mysql> GRANT ALL ON example_database.* TO 'example_user'@'%';
+
+Now exit the MySQL shell with:
+
+mysql> exit
+
+
+mysql -u example_user -p  (USE THE NEW USER PASSCREATED RECENTLY AND LOG IN AGAIN )
+
+PLEASE NOTE YOU CREATED   ............example_user1 ...Te...2020
+
+
+http://3.86.42.22/todo_list.php
+
+http://3.90.229.187/todo_list.php
+
+
+http://<Public_domain_or_IP>/todo_list.php
+
+
+PLEASE NOTE YOU CREATED with this details 
+example_database
+example_user2     vs password2
+
+
+sudo rm /var/www/3.90.229.187/info.php
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
